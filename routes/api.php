@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\RequestController;
+use App\Http\Controllers\Admin\PartnerController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
@@ -18,6 +19,14 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/search/{requestSearch}', [RequestController::class, "requestSearch"]);
             Route::post('/', [RequestController::class, "acceptedRequest"]);
             Route::delete('/{user}', [RequestController::class, "rejectedRequest"]);
+        });
+
+        Route::group(['prefix' => 'partner'], function(){
+            Route::get('/', [PartnerController::class, "getAllPartner"]);
+            Route::get('/{user}', [PartnerController::class, "getById"]);
+            Route::get('/search/{requestSearch}', [PartnerController::class, "partnerSearch"]);
+            Route::delete('/{user}', [PartnerController::class, "deletePartner"]);
+            Route::post('/', [PartnerController::class, "updatePartner"]);
         });
 
     });
