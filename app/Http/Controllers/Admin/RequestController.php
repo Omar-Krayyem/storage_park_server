@@ -44,6 +44,22 @@ class RequestController extends Controller
         }
     }
 
+    public function requestSearch($requestSearch) {
+        try {
+            $users = User::where(function ($query) use ($requestSearch) {
+                $query->where('email', 'LIKE', "%$requestSearch%")
+                     ->orWhere('company_name', 'LIKE', "%$requestSearch%");
+            })
+            ->where('user_type_id', 3)
+            ->whereNull('password')
+            ->get();
+    
+            return $this->customResponse($users);
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
+        } 
+    }
+    
     public function acceptedRequest(Request $request){
         try{
             $validated_data = $this->validate($request, [

@@ -15,6 +15,7 @@ Route::group(["middleware" => "auth:api"], function(){
         Route::group(['prefix' => 'request'], function(){
             Route::get('/', [RequestController::class, "getAllRequest"]);
             Route::get('/{user}', [RequestController::class, "getById"]);
+            Route::get('/search/{requestSearch}', [RequestController::class, "requestSearch"]);
             Route::post('/', [RequestController::class, "acceptedRequest"]);
             Route::delete('/{user}', [RequestController::class, "rejectedRequest"]);
         });
