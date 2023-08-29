@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Admin\PartnerController;
+use App\Http\Controllers\Admin\WorkerController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
@@ -27,6 +28,15 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/search/{requestSearch}', [PartnerController::class, "partnerSearch"]);
             Route::delete('/{user}', [PartnerController::class, "deletePartner"]);
             Route::post('/', [PartnerController::class, "updatePartner"]);
+        });
+
+        Route::group(['prefix' => 'worker'], function(){
+            Route::post('/store', [WorkerController::class, "createWorker"]);
+            Route::post('/update', [WorkerController::class, "updateWorker"]);
+            Route::get('/', [WorkerController::class, "getAllWorker"]);
+            Route::get('/{user}', [WorkerController::class, "getById"]);
+            Route::get('/search/{requestSearch}', [WorkerController::class, "workerSearch"]);
+            Route::delete('/{user}', [WorkerController::class, "deleteWorker"]);
         });
 
     });
