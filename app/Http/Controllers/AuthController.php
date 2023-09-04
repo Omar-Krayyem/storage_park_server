@@ -26,7 +26,7 @@ class AuthController extends Controller
         if (!$token) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Unauthorized',
+                'message' => 'Invalid email or password',
             ], 401);
         }
 
@@ -64,15 +64,15 @@ class AuthController extends Controller
             // 'password' => Hash::make($request->password),
         ]);
 
-        $token = Auth::login($user);
+        // $token = Auth::login($user);
         return response()->json([
             'status' => 'success',
             'message' => 'User created successfully',
             'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ]
+            // 'authorisation' => [
+            //     'token' => $token,
+            //     'type' => 'bearer',
+            // ]
         ]);
     }
 

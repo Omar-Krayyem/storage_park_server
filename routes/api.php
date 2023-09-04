@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\WorkerController;
+use App\Http\Controllers\Partner\IncomingController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
@@ -42,7 +43,9 @@ Route::group(["middleware" => "auth:api"], function(){
     });
 
     Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function(){
-
+        Route::group(['prefix' => 'incoming'], function(){
+            Route::post('/create', [IncomingController::class, "createOrder"]);
+        });
     });
 
     Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function(){

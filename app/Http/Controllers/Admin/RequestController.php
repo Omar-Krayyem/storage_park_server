@@ -63,54 +63,50 @@ class RequestController extends Controller
     public function acceptedRequest(Request $request){
         try{
             $validated_data = $this->validate($request, [
-                'request_id' => ['required', 'numeric'],
+                'user_id' => ['required', 'numeric'],
+                'password' => ['required', 'string']
             ]);
             
-            $request_id = $validated_data['request_id'];
+            $user_id = $validated_data['user_id'];
+            $password = $validated_data['password'];
 
-            $user = User::find($request_id);
+            $user = User::find($user_id);
 
-            $email = $user->email;
-            $randomPassword = Str::random(12);
-
-            $password = Hash::make($randomPassword);
+            $password = Hash::make($password);
             $user->password = $password;
             $user->save();
 
-            echo $email . "\n";
-            echo $randomPassword;
-
-            return $this->sendEmailWithLoginDetails($email, $randomPassword);
+            return $this->customResponse($user);
         }catch(Exception $e){
             return self::customResponse($e->getMessage(),'error',500);
         }
     }
 
-    public function sendEmailWithLoginDetails($userEmail, $userPassword)
-    {
-        $userEmail = "omar.krayyem95@gmail.com";
+    // public function sendEmailWithLoginDetails($userEmail, $userPassword)
+    // {
+    //     $userEmail = "omar.krayyem95@gmail.com";
 
-        $transport = (new Swift_SmtpTransport(Config::get('mail.host'), Config::get('mail.port')))
-            ->setUsername(Config::get('mail.username'))
-            ->setPassword(Config::get('mail.password'));
+    //     $transport = (new Swift_SmtpTransport(Config::get('mail.host'), Config::get('mail.port')))
+    //         ->setUsername(Config::get('mail.username'))
+    //         ->setPassword(Config::get('mail.password'));
 
-        $mailer = new Swift_Mailer($transport);
+    //     $mailer = new Swift_Mailer($transport);
 
-        // Create the message
-        $message = (new Swift_Message('Your Login Details'))
-            ->setFrom(['storagepark.lb@gmail.com' => 'Storage Park'])
-            ->setTo([$userEmail])
-            ->setBody("Your email: {$userEmail}\nYour password: {$userPassword}");
+    //     // Create the message
+    //     $message = (new Swift_Message('Your Login Details'))
+    //         ->setFrom(['storagepark.lb@gmail.com' => 'Storage Park'])
+    //         ->setTo([$userEmail])
+    //         ->setBody("Your email: {$userEmail}\nYour password: {$userPassword}");
 
-        // Send the email
-        $result = $mailer->send($message);
+    //     // Send the email
+    //     $result = $mailer->send($message);
 
-        if ($result) {
-            return response()->json(['message' => 'Email sent successfully'], 200);
-        } else {
-            return response()->json(['message' => 'Failed to send email'], 500);
-        }
-    }
+    //     if ($result) {
+    //         return response()->json(['message' => 'Email sent successfully'], 200);
+    //     } else {
+    //         return response()->json(['message' => 'Failed to send email'], 500);
+    //     }
+    // }
 
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];

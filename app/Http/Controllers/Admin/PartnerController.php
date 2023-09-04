@@ -55,12 +55,13 @@ class PartnerController extends Controller
     public function updatePartner(Request $request_info)
     {
         try {
-            $user = User::find($request_info->id);
+            $user = User::find($request_info->user_id);
             $user->first_name = $request_info->first_name;
             $user->last_name = $request_info->last_name;
             $user->email = $request_info->email;
             $user->phone = $request_info->phone;
             $user->address = $request_info->address;
+            $user->company_name = $request_info->company_name;
     
             $user->save();
     
