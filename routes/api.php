@@ -45,6 +45,7 @@ Route::group(["middleware" => "auth:api"], function(){
     Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function(){
         Route::group(['prefix' => 'incoming'], function(){
             Route::post('/create', [IncomingController::class, "createOrder"]);
+            Route::get('/', [IncomingController::class, "getAll"]);
         });
     });
 

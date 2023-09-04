@@ -65,6 +65,23 @@ class IncomingController extends Controller
         }
     }
 
+    public function getAll(){
+        try{
+            $user_id = Auth::user()->id;
+
+            $orders = Order::where('user_id', $user_id)->where('oreder_type', 1)->where('status', 'placed')->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+
+            return $this->customResponse($orders, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
         return response()->json($response,$code);
