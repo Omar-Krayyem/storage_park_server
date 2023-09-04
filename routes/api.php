@@ -43,27 +43,12 @@ Route::group(["middleware" => "auth:api"], function(){
     });
 
     Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function(){
+    });
+
+    Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function(){
         Route::group(['prefix' => 'incoming'], function(){
             Route::post('/create', [IncomingController::class, "createOrder"]);
             Route::get('/', [IncomingController::class, "getAll"]);
         });
     });
-
-    Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function(){
-
-    });
 });
-
-
-// Route::controller(AuthController::class)->group(function () {
-//     Route::post('login', 'login');
-//     Route::post('register', 'register');
-//     Route::post('logout', 'logout');
-//     Route::post('refresh', 'refresh');
-
-// });
-
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });

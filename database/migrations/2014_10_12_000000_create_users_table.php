@@ -14,10 +14,9 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->integer('phone');
+            $table->string('phone');
             $table->string('address');
-            $table->string('company_name')->nullable();
-            $table->string('position')->nullable();
+            $table->string('company_name')->nullable()->unique();
             $table->unsignedBigInteger('user_type_id');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

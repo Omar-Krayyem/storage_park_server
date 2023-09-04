@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->integer('quantity');
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('user_id');
         });
     }
 

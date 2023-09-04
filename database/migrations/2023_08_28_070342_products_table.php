@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->integer('quantity');
-            $table->decimal('price', 10, 2);
             $table->unsignedBigInteger('product_category_id');
         });
     }
