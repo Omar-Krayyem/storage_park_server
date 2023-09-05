@@ -47,8 +47,9 @@ Route::group(["middleware" => "auth:api"], function(){
 
     Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function(){
         Route::group(['prefix' => 'incoming'], function(){
-            Route::post('/create', [IncomingController::class, "createOrder"]);
+            Route::post('create', [IncomingController::class, "createOrder"]);
             Route::get('/', [IncomingController::class, "getAll"]);
+            Route::get('/products', [IncomingController::class, "getProducts"]);
         });
     });
 });

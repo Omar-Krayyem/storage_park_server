@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\OrderItem;
+use PDO;
+
 class IncomingController extends Controller
 {
     public function createOrder(Request $request_info){
@@ -20,26 +22,27 @@ class IncomingController extends Controller
                 'products' => ['required', 'array'],
             ]);
 
-            $company_name = Auth::user()->company_name;
-            $lastOrder = Order::where('company_name', $company_name)->orderBy('id', 'desc')->first();
-
-            if ($lastOrder) {
-                $order_id = substr(strtoupper($company_name), 0, 3) . ($lastOrder->id + 1);
-            } else {
-                $order_id = substr(strtoupper($company_name), 0, 3) . '1000';
-            }
 
             $order = Order::create([
-                'id' => $order_id,
                 'user_id' => $user_id,
                 'placed_at' => now(),
                 'order_type_id' => 1,
                 'status' => 'placed',
+                'longitude' => $validated_data['longitude'],
+                'latitude' => $validated_data['latitude'],
             ]);
 
+            $total_price = 0;
+
             foreach ($validated_data['products'] as $product) {
-                $existingProduct = Product::where('name', $product['name'])->where('description', $product['description'])->where('price', $product['price'])->where('product_category_id', $product['product_category_id'])->first();
-    
+                $existingProduct = Product::where('name', $product['name'])
+                ->where('description', $product['description'])
+                ->where('price', $product['price'])
+                ->where('product_category_id', $product['product_category_id'])
+                ->first();
+
+                echo $existingProduct;
+
                 if (!$existingProduct) {
                     $newProduct = Product::create([
                         'name' => $product['name'],
@@ -56,8 +59,12 @@ class IncomingController extends Controller
                     'product_id' => $newProduct->id,
                     'quantity' => $product['quantity'],
                 ]);
+
+                $total_price +=  ($product['quantity'] * $product['price']);
             }
-    
+            
+            $order->update(['total_price' => $total_price]);
+
             return $this->customResponse('Order created successfully', 'success', 200);
 
         }catch(Exception $e){
@@ -69,7 +76,7 @@ class IncomingController extends Controller
         try{
             $user_id = Auth::user()->id;
 
-            $orders = Order::where('user_id', $user_id)->where('oreder_type', 1)->where('status', 'placed')->get();
+            $orders = Order::where('user_id', $user_id)->where('order_type_id', 1)->where('status', 'placed')->get();
 
             $orders= $orders->map(function ($order) {
                 $order->item_count = $order->orderItems->count();
@@ -77,6 +84,16 @@ class IncomingController extends Controller
             });
 
             return $this->customResponse($orders, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
+    public function getProducts(){
+        try{
+            $products = Product::get();
+
+            return $this->customResponse($products, 'success', 200);
         }catch(Exception $e){
             return self::customResponse($e->getMessage(),'error',500);
         }

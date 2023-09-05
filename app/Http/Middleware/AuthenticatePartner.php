@@ -19,7 +19,7 @@ class AuthenticatePartner
         
         return response()->json([
             'status' => 'Error',
-            'message' => 'Unauthorized',
+            'message' => 'Unauthorized!!!',
         ], 200); 
     }
 }

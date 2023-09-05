@@ -11,6 +11,8 @@ class UserType extends Model
 
     protected $guarded = ['id'];
 
+    public $timestamps = false;
+
     public function users(){
         return $this->hasMany(User::class, 'user_type_id');
     }

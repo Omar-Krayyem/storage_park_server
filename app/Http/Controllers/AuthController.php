@@ -49,7 +49,8 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'required|numeric|min:8',
             'address' => 'required|string|max:255',
-            'company_name' => 'required|string|max:255',
+            'company_name' => 'required|string|max:255|unique:users',
+            // 'password' => 'required'
         ]);
         $user_type_id = 3;
 
@@ -60,19 +61,14 @@ class AuthController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'company_name' => $request->company_name,
-            'user_type_id' => $user_type_id
+            'user_type_id' => $user_type_id,
             // 'password' => Hash::make($request->password),
         ]);
 
-        // $token = Auth::login($user);
         return response()->json([
             'status' => 'success',
             'message' => 'User created successfully',
             'user' => $user,
-            // 'authorisation' => [
-            //     'token' => $token,
-            //     'type' => 'bearer',
-            // ]
         ]);
     }
 

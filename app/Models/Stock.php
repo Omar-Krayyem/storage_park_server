@@ -11,6 +11,8 @@ class Stock extends Model
 
     protected $guarded = ['id'];
 
+    public $timestamps = false;
+    
     public function product(){
         return $this->belongsTo(Product::class,'product_id');
     }
