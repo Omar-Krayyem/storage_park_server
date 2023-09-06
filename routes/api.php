@@ -50,6 +50,7 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::post('create', [IncomingController::class, "createOrder"]);
             Route::get('/', [IncomingController::class, "getAll"]);
             Route::get('/products', [IncomingController::class, "getProducts"]);
+            Route::get('/search/{requestSearch}', [IncomingController::class, "placedSearch"]);
         });
     });
 });
