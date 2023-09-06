@@ -50,6 +50,21 @@ class IncomingAdminController extends Controller
         } 
     }
 
+    public function getAllShipment(){
+        try{
+            $orders = Order::where('order_type_id', 1)->where('status', 'shipment')->with('worker')->with('user')->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+
+            return $this->customResponse($orders, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
 
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
