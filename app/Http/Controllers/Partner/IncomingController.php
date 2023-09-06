@@ -75,7 +75,7 @@ class IncomingController extends Controller
         }
     }
 
-    public function getAll(){
+    public function getAllPlaced(){
         try{
             $user_id = Auth::user()->id;
 
@@ -110,6 +110,47 @@ class IncomingController extends Controller
                      ->orWhere('placed_at', 'LIKE', "%$requestSearch%");
             })
             ->where('status', 'placed')
+            ->where('order_type_id', 1)
+            ->where('user_id', $user_id)
+            ->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+    
+            return $this->customResponse($orders);
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
+        } 
+    }
+
+
+    public function getAllShipment(){
+        try{
+            $user_id = Auth::user()->id;
+
+            $orders = Order::where('user_id', $user_id)->where('order_type_id', 1)->where('status', 'shipment')->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+
+            return $this->customResponse($orders, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
+    public function shipmentSearch($requestSearch) {
+        try {
+            $user_id = Auth::user()->id;
+            $orders = Order::where(function ($query) use ($requestSearch) {
+                $query->where('id', 'LIKE', "%$requestSearch%")
+                     ->orWhere('placed_at', 'LIKE', "%$requestSearch%");
+            })
+            ->where('status', 'shipment')
             ->where('order_type_id', 1)
             ->where('user_id', $user_id)
             ->get();

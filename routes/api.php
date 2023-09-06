@@ -54,10 +54,13 @@ Route::group(["middleware" => "auth:api"], function(){
 
     Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function(){
         Route::group(['prefix' => 'incoming'], function(){
-            Route::post('create', [IncomingController::class, "createOrder"]);
-            Route::get('/', [IncomingController::class, "getAll"]);
+            Route::post('placed/create', [IncomingController::class, "createOrder"]);
+            Route::get('/placed', [IncomingController::class, "getAllPlaced"]);
             Route::get('/products', [IncomingController::class, "getProducts"]);
-            Route::get('/search/{requestSearch}', [IncomingController::class, "placedSearch"]);
+            Route::get('placed/search/{requestSearch}', [IncomingController::class, "placedSearch"]);
+
+            Route::get('/shipment', [IncomingController::class, "getAllShipment"]);
+            Route::get('shipment/search/{requestSearch}', [IncomingController::class, "shipmentSearch"]);
         });
     });
 });
