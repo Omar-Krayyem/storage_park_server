@@ -54,15 +54,34 @@ class IncomingAdminController extends Controller
         try{
             $orders = Order::where('order_type_id', 1)->where('status', 'shipment')->with('worker')->with('user')->get();
 
-            $orders= $orders->map(function ($order) {
-                $order->item_count = $order->orderItems->count();
-                return $order;
-            });
-
             return $this->customResponse($orders, 'success', 200);
         }catch(Exception $e){
             return self::customResponse($e->getMessage(),'error',500);
         }
+    }
+
+    public function shipmentSearch($requestSearch) {
+        try {
+            $orders = Order::with(['user', 'worker'])
+                ->where('status', 'shipment')
+                ->where('order_type_id', 1)
+                ->where(function ($query) use ($requestSearch) {
+                    $query->where('id', 'LIKE', "%$requestSearch%")
+                        ->orWhere('placed_at', 'LIKE', "%$requestSearch%")
+                        ->orWhereHas('user', function ($userQuery) use ($requestSearch) {
+                            $userQuery->where('company_name', 'LIKE', "%$requestSearch%");
+                        })
+                        ->orWhereHas('worker', function ($workerQuery) use ($requestSearch) {
+                            $workerQuery->where('first_name', 'LIKE', "%$requestSearch%")
+                                        ->orWhere('last_name', 'LIKE', "%$requestSearch%");
+                        });
+                })
+                ->get();
+    
+            return $this->customResponse($orders);
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
+        } 
     }
 
 
