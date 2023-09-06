@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\WorkerController;
 use App\Http\Controllers\Partner\IncomingController;
+use App\Http\Controllers\Admin\IncomingAdminController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
@@ -40,6 +41,9 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::delete('/{user}', [WorkerController::class, "deleteWorker"]);
         });
 
+        Route::group(['prefix' => 'incoming'], function(){
+            Route::get('/placed', [IncomingAdminController::class, "getAllPlaced"]);
+        });
     });
 
     Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function(){
