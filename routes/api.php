@@ -56,7 +56,7 @@ Route::group(["middleware" => "auth:api"], function(){
         Route::group(['prefix' => 'incoming'], function(){
             Route::post('placed/create', [IncomingController::class, "createOrder"]);
             Route::get('/placed', [IncomingController::class, "getAllPlaced"]);
-            Route::get('/products', [IncomingController::class, "getProducts"]);
+            Route::get('/products', [IncomingController::class, "getProductsandCategories"]);
             Route::get('placed/search/{requestSearch}', [IncomingController::class, "placedSearch"]);
 
             Route::get('/shipment', [IncomingController::class, "getAllShipment"]);

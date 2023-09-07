@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\OrderItem;
+use App\Models\productCategory;
 use PDO;
 
 class IncomingController extends Controller
@@ -18,10 +19,9 @@ class IncomingController extends Controller
             $user = auth()->user();
             $user_id = $user->id;
             $validated_data = $this->validate($request_info, [
-                'longitude' => ['required', 'numeric'],
-                'latitude' => ['required', 'numeric'],
-                'newProducts' => ['array'],
-                'oldProducts' => ['array'],
+                'longitude' => ['required'],
+                'latitude' => ['required'],
+                'newProducts' => ['required', 'array'],
             ]);
 
 
@@ -36,32 +36,29 @@ class IncomingController extends Controller
 
             $total_price = 0;
 
-            foreach ($validated_data['oldProducts'] as $product){
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product['id'],
-                    'quantity' => $product['quantity'],
-                ]);
-
-                $getProduct = Product::where('id', $product['id'])->first();
-
-                $total_price +=  ($product['quantity'] * $getProduct->price);
-            }
-
             foreach ($validated_data['newProducts'] as $product) {
+                if($product['id'] == 0){
 
-                $newProduct = Product::create([
-                    'name' => $product['productName'],
-                    'description' => $product['description'],
-                    'price' => $product['price'],
-                    'product_category_id' => $product['product_category_id']
-                ]);
-    
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $newProduct->id,
-                    'quantity' => $product['quantity'],
-                ]);
+                    $newProduct = Product::create([
+                        'name' => $product['productName'],
+                        'description' => $product['description'],
+                        'price' => $product['price'],
+                        'product_category_id' => $product['product_category_id']
+                    ]);
+        
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $newProduct->id,
+                        'quantity' => $product['quantity'],
+                    ]);
+                }
+                else{
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $product['id'],
+                        'quantity' => $product['quantity'],
+                    ]);        
+                }
 
                 $total_price +=  ($product['quantity'] * $product['price']);
             }
@@ -92,11 +89,19 @@ class IncomingController extends Controller
         }
     }
 
-    public function getProducts(){
+    public function getProductsandCategories(){
         try{
             $products = Product::with('category')->get();
 
-            return $this->customResponse($products, 'success', 200);
+            $categories = productCategory::get();
+
+            $result = [
+                'products' => $products,
+                'categories' => $categories,
+            ];
+            
+
+            return $this->customResponse($result, 'success', 200);
         }catch(Exception $e){
             return self::customResponse($e->getMessage(),'error',500);
         }
