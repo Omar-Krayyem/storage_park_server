@@ -89,6 +89,15 @@ class IncomingController extends Controller
         }
     }
 
+    public function getPlacedById(Order $order){
+        try{
+            $order = Order::with('orderItems.product.category')->find($order->id);
+            return $this->customResponse($order, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
     public function getProductsandCategories(){
         try{
             $products = Product::with('category')->get();
