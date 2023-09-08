@@ -101,6 +101,30 @@ class IncomingAdminController extends Controller
         }
     }
 
+    public function selectWorker(Request $request_info){
+        try {
+            $validated_data = $this->validate($request_info, [
+                'id' => ['required', 'numeric'],
+                'selectedWorkerId' => ['required', 'numeric']
+            ]);
+    
+            $order = Order::find($validated_data['id']);
+    
+            if (!$order) {
+                return $this->customResponse('Order not found', 'error', 404);
+            }
+    
+            $order->status = "shipment";
+            $order->worker_id = $validated_data['selectedWorkerId'];
+    
+            $order->save();
+    
+            return $this->customResponse($order, 'Updated Successfully');
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
+        }
+    }
+
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
         return response()->json($response,$code);

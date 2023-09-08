@@ -45,6 +45,8 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/placed', [IncomingAdminController::class, "getAllPlaced"]);
             Route::get('/placed/search/{requestSearch}', [IncomingAdminController::class, "placedSearch"]);
             Route::get('/placed/{order}', [IncomingAdminController::class, "getPlacedById"]);
+            Route::post('/placed/selectWorker', [IncomingAdminController::class, "selectWorker"]);
+
             Route::get('/shipment', [IncomingAdminController::class, "getAllShipment"]);
             Route::get('/shipment/search/{requestSearch}', [IncomingAdminController::class, "shipmentSearch"]);
         });
