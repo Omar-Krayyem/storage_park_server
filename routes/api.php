@@ -49,6 +49,7 @@ Route::group(["middleware" => "auth:api"], function(){
 
             Route::get('/shipment', [IncomingAdminController::class, "getAllShipment"]);
             Route::get('/shipment/search/{requestSearch}', [IncomingAdminController::class, "shipmentSearch"]);
+            Route::get('/shipment/{order}', [IncomingAdminController::class, "getShipmentById"]);
         });
     });
 
@@ -65,6 +66,7 @@ Route::group(["middleware" => "auth:api"], function(){
 
             Route::get('/shipment', [IncomingController::class, "getAllShipment"]);
             Route::get('shipment/search/{requestSearch}', [IncomingController::class, "shipmentSearch"]);
+            Route::get('/shipment/{order}', [IncomingController::class, "getShipmentById"]);
         });
     });
 });

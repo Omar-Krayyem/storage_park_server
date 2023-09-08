@@ -51,40 +51,6 @@ class IncomingAdminController extends Controller
         } 
     }
 
-    public function getAllShipment(){
-        try{
-            $orders = Order::where('order_type_id', 1)->where('status', 'shipment')->with('worker')->with('user')->get();
-
-            return $this->customResponse($orders, 'success', 200);
-        }catch(Exception $e){
-            return self::customResponse($e->getMessage(),'error',500);
-        }
-    }
-
-    public function shipmentSearch($requestSearch) {
-        try {
-            $orders = Order::with(['user', 'worker'])
-                ->where('status', 'shipment')
-                ->where('order_type_id', 1)
-                ->where(function ($query) use ($requestSearch) {
-                    $query->where('id', 'LIKE', "%$requestSearch%")
-                        ->orWhere('placed_at', 'LIKE', "%$requestSearch%")
-                        ->orWhereHas('user', function ($userQuery) use ($requestSearch) {
-                            $userQuery->where('company_name', 'LIKE', "%$requestSearch%");
-                        })
-                        ->orWhereHas('worker', function ($workerQuery) use ($requestSearch) {
-                            $workerQuery->where('first_name', 'LIKE', "%$requestSearch%")
-                                        ->orWhere('last_name', 'LIKE', "%$requestSearch%");
-                        });
-                })
-                ->get();
-    
-            return $this->customResponse($orders);
-        } catch (Exception $e) {
-            return self::customResponse($e->getMessage(), 'error', 500);
-        } 
-    }
-
     public function getPlacedById(Order $order){
         try{
             $order = Order::with('orderItems.product.category')->find($order->id);
@@ -122,6 +88,54 @@ class IncomingAdminController extends Controller
             return $this->customResponse($order, 'Updated Successfully');
         } catch (Exception $e) {
             return self::customResponse($e->getMessage(), 'error', 500);
+        }
+    }
+
+
+    public function getAllShipment(){
+        try{
+            $orders = Order::where('order_type_id', 1)->where('status', 'shipment')->with('worker')->with('user')->get();
+
+            return $this->customResponse($orders, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
+    public function shipmentSearch($requestSearch) {
+        try {
+            $orders = Order::with(['user', 'worker'])
+                ->where('status', 'shipment')
+                ->where('order_type_id', 1)
+                ->where(function ($query) use ($requestSearch) {
+                    $query->where('id', 'LIKE', "%$requestSearch%")
+                        ->orWhere('placed_at', 'LIKE', "%$requestSearch%")
+                        ->orWhereHas('user', function ($userQuery) use ($requestSearch) {
+                            $userQuery->where('company_name', 'LIKE', "%$requestSearch%");
+                        })
+                        ->orWhereHas('worker', function ($workerQuery) use ($requestSearch) {
+                            $workerQuery->where('first_name', 'LIKE', "%$requestSearch%")
+                                        ->orWhere('last_name', 'LIKE', "%$requestSearch%");
+                        });
+                })
+                ->get();
+    
+            return $this->customResponse($orders);
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
+        } 
+    }
+
+    public function getShipmentById(Order $order){
+        try{
+            $order = Order::with([
+                'worker',
+                'orderItems.product.category',
+            ])->find($order->id);
+
+            return $this->customResponse($order, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
         }
     }
 
