@@ -57,6 +57,7 @@ Route::group(["middleware" => "auth:api"], function(){
     Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function(){
         Route::group(['prefix' => 'incoming'], function(){
             Route::get('/shipment', [IncomingWorkerController::class, "getAllShipment"]);
+            Route::get('/shipment/search/{requestSearch}', [IncomingWorkerController::class, "shipmentSearch"]);
         });
     });
 

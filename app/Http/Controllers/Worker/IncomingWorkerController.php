@@ -30,6 +30,37 @@ class IncomingWorkerController extends Controller
         }
     }
 
+    public function shipmentSearch($requestSearch) {
+        try {
+            $worker_id = Auth::user()->id;
+            $orders = Order::with(['user', 'worker'])
+                ->where('status', 'shipment')
+                ->where('order_type_id', 1)
+                ->where('worker_id', $worker_id)
+                ->where(function ($query) use ($requestSearch) {
+                    $query->where('id', 'LIKE', "%$requestSearch%")
+                        ->orWhere('placed_at', 'LIKE', "%$requestSearch%")
+                        ->orWhereHas('user', function ($userQuery) use ($requestSearch) {
+                            $userQuery->where('company_name', 'LIKE', "%$requestSearch%");
+                        })
+                        ->orWhereHas('worker', function ($workerQuery) use ($requestSearch) {
+                            $workerQuery->where('first_name', 'LIKE', "%$requestSearch%")
+                                        ->orWhere('last_name', 'LIKE', "%$requestSearch%");
+                        });
+                })
+                ->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+    
+            return $this->customResponse($orders);
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
+        } 
+    }
+
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
         return response()->json($response,$code);
