@@ -61,6 +61,15 @@ class IncomingWorkerController extends Controller
         } 
     }
 
+    public function getShipmentById(Order $order){
+        try{
+            $order = Order::with(['user', 'orderItems.product.category'])->find($order->id);
+            return $this->customResponse($order, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
         return response()->json($response,$code);
