@@ -59,6 +59,7 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/shipment', [IncomingWorkerController::class, "getAllShipment"]);
             Route::get('/shipment/search/{requestSearch}', [IncomingWorkerController::class, "shipmentSearch"]);
             Route::get('/shipment/{order}', [IncomingWorkerController::class, "getShipmentById"]);
+            Route::post('/shipment/addToDelivered', [IncomingWorkerController::class, "addToDelivered"]);
         });
     });
 
