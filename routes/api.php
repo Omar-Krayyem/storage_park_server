@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\WorkerController;
 use App\Http\Controllers\Partner\IncomingController;
 use App\Http\Controllers\Admin\IncomingAdminController;
+use App\Http\Controllers\Worker\IncomingWorkerController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
@@ -54,6 +55,9 @@ Route::group(["middleware" => "auth:api"], function(){
     });
 
     Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function(){
+        Route::group(['prefix' => 'incoming'], function(){
+            Route::get('/shipment', [IncomingWorkerController::class, "getAllShipment"]);
+        });
     });
 
     Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function(){
