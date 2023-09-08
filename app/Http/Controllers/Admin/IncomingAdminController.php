@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Exception;
 use App\Models\Order;
+use App\Models\User;
 
 class IncomingAdminController extends Controller
 {
@@ -84,6 +85,21 @@ class IncomingAdminController extends Controller
         } 
     }
 
+    public function getPlacedById(Order $order){
+        try{
+            $order = Order::with('orderItems.product.category')->find($order->id);
+            $workers = User::where('user_type_id' , 2)->get();
+
+            $result = [
+                'order' => $order,
+                'workers' => $workers,
+            ];
+
+            return $this->customResponse($result, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
 
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
