@@ -53,7 +53,7 @@ class IncomingAdminController extends Controller
 
     public function getPlacedById(Order $order){
         try{
-            $order = Order::with('orderItems.product.category')->find($order->id);
+            $order = Order::with(['orderItems.product.category' , 'user'])->find($order->id);
             $workers = User::where('user_type_id' , 2)->get();
 
             $result = [
@@ -131,6 +131,7 @@ class IncomingAdminController extends Controller
             $order = Order::with([
                 'worker',
                 'orderItems.product.category',
+                'user'
             ])->find($order->id);
 
             return $this->customResponse($order, 'success', 200);
@@ -138,6 +139,56 @@ class IncomingAdminController extends Controller
             return self::customResponse($e->getMessage(),'error',500);
         }
     }
+
+    public function getAllDelivered(){
+        try{
+            $orders = Order::where('order_type_id', 1)->where('status', 'delivered')->with('worker')->with('user')->get();
+
+            return $this->customResponse($orders, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
+    public function deliveredSearch($requestSearch) {
+        try {
+            $orders = Order::with(['user', 'worker'])
+                ->where('status', 'delivered')
+                ->where('order_type_id', 1)
+                ->where(function ($query) use ($requestSearch) {
+                    $query->where('id', 'LIKE', "%$requestSearch%")
+                        ->orWhere('placed_at', 'LIKE', "%$requestSearch%")
+                        ->orWhereHas('user', function ($userQuery) use ($requestSearch) {
+                            $userQuery->where('company_name', 'LIKE', "%$requestSearch%");
+                        })
+                        ->orWhereHas('worker', function ($workerQuery) use ($requestSearch) {
+                            $workerQuery->where('first_name', 'LIKE', "%$requestSearch%")
+                                        ->orWhere('last_name', 'LIKE', "%$requestSearch%");
+                        });
+                })
+                ->get();
+    
+            return $this->customResponse($orders);
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
+        } 
+    }
+
+    public function getDeliveredtById(Order $order){
+        try{
+            $order = Order::with([
+                'worker',
+                'orderItems.product.category',
+                'user'
+            ])->find($order->id);
+
+            return $this->customResponse($order, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
+    
 
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
