@@ -67,14 +67,14 @@ class IncomingWorkerController extends Controller
         }
     }
 
-    public function AddToDelivered(Request $request_info){
-        try{
-
+    public function AddToDelivered(Request $request_info)
+    {
+        try {
             $validated_data = $this->validate($request_info, [
                 'id' => ['required', 'numeric'],
             ]);
     
-            $order = Order::find($validated_data['id']);
+            $order = Order::where('id', $validated_data['id'])->first();
     
             if (!$order) {
                 return $this->customResponse('Order not found', 'error', 404);
@@ -84,18 +84,21 @@ class IncomingWorkerController extends Controller
             $order->delivered_at = now();
     
             $order->save();
-
-            $order_items = OrderItem::where('order_id', $order->id);
-            dd($order_items);
-            foreach($order_items as $item){
-                $product = Product::where('id', $item->product_id)->find();
-                $stock = Stock::where('user_id', $order->user_id->where('product_id', $item->product_id))->first();
-
-                if($stock){
+    
+            $order_items = OrderItem::where('order_id', $order->id)->get();
+    
+            foreach ($order_items as $item) {
+                $product = Product::where('id', $item->product_id)->first();
+                
+                // Use where() on the Stock model directly
+                $stock = Stock::where('user_id', $order->user_id)
+                    ->where('product_id', $item->product_id)
+                    ->first();
+    
+                if ($stock) {
                     $stock->quantity += $item->quantity;
                     $stock->save();
-                }
-                else{
+                } else {
                     $new_stock = new Stock();
                     $new_stock->product_id = $product->id;
                     $new_stock->user_id = $order->user_id;
@@ -103,10 +106,11 @@ class IncomingWorkerController extends Controller
                     $new_stock->save();
                 }
             }
-        
-            return $this->customResponse($order, 'Updated Successfully');
-        }catch(Exception $e){
-            return self::customResponse($e->getMessage(),'error',500);
+    
+            // Return order_items instead of $order
+            return $this->customResponse($order_items, 'Updated Successfully');
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
         }
     }
 
