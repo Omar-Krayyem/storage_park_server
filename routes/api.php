@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\IncomingAdminController;
 use App\Http\Controllers\Worker\IncomingWorkerController;
 use App\Http\Controllers\Admin\StoredProductsController;
 use App\Http\Controllers\Partner\PStoredProductsController;
+use App\Http\Controllers\SharedController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
@@ -102,4 +103,7 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/search/{requestSearch}', [PStoredProductsController::class, "search"]);
         });
     });
+
+    Route::post("/profile", [SharedController::class, "updateProfile"]);
+
 });
