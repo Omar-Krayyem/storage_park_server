@@ -10,6 +10,7 @@ use App\Http\Controllers\Partner\IncomingController;
 use App\Http\Controllers\Admin\IncomingAdminController;
 use App\Http\Controllers\Worker\IncomingWorkerController;
 use App\Http\Controllers\Admin\StoredProductsController;
+use App\Http\Controllers\Partner\PStoredProductsController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
@@ -93,6 +94,12 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/delivered', [IncomingController::class, "getAllDelivered"]);
             Route::get('/delivered/search/{requestSearch}', [IncomingController::class, "deliveredSearch"]);
             Route::get('/delivered/{order}', [IncomingController::class, "getDeliveredtById"]);
+        });
+
+        Route::group(['prefix' => 'stock'], function(){
+            Route::get('/', [PStoredProductsController::class, "getAll"]);
+            Route::get('/{stock}', [PStoredProductsController::class, "getById"]);
+            Route::get('/search/{requestSearch}', [PStoredProductsController::class, "search"]);
         });
     });
 });
