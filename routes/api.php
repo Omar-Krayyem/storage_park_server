@@ -64,6 +64,10 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/shipment/search/{requestSearch}', [IncomingWorkerController::class, "shipmentSearch"]);
             Route::get('/shipment/{order}', [IncomingWorkerController::class, "getShipmentById"]);
             Route::post('/shipment/addToDelivered', [IncomingWorkerController::class, "addToDelivered"]);
+
+            Route::get('/delivered', [IncomingWorkerController::class, "getAllDelivered"]);
+            Route::get('/delivered/search/{requestSearch}', [IncomingWorkerController::class, "deliveredSearch"]);
+            Route::get('/delivered/{order}', [IncomingWorkerController::class, "getDeliveredtById"]);
         });
     });
 
@@ -78,6 +82,10 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/shipment', [IncomingController::class, "getAllShipment"]);
             Route::get('shipment/search/{requestSearch}', [IncomingController::class, "shipmentSearch"]);
             Route::get('/shipment/{order}', [IncomingController::class, "getShipmentById"]);
+
+            Route::get('/delivered', [IncomingController::class, "getAllDelivered"]);
+            Route::get('/delivered/search/{requestSearch}', [IncomingController::class, "deliveredSearch"]);
+            Route::get('/delivered/{order}', [IncomingController::class, "getDeliveredtById"]);
         });
     });
 });
