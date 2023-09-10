@@ -149,6 +149,10 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/placed/{order}', [OutgoingController::class, "getPlacedById"]);
             Route::get('/products', [OutgoingController::class, "getStock"]);
             Route::get('placed/search/{requestSearch}', [OutgoingController::class, "placedSearch"]);
+
+            Route::get('/shipment', [IncomingController::class, "getAllShipment"]);
+            Route::get('shipment/search/{requestSearch}', [IncomingController::class, "shipmentSearch"]);
+            Route::get('/shipment/{order}', [IncomingController::class, "getShipmentById"]);
         });
 
     });

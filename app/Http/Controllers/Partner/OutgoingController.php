@@ -141,6 +141,59 @@ class OutgoingController extends Controller
         } 
     }
 
+    public function getAllShipment(){
+        try{
+            $user_id = Auth::user()->id;
+
+            $orders = Order::where('user_id', $user_id)->where('order_type_id', 2)->where('status', 'shipment')->with('customer')->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+
+            return $this->customResponse($orders, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
+    public function shipmentSearch($requestSearch) {
+        try {
+            $user_id = Auth::user()->id;
+            $orders = Order::where(function ($query) use ($requestSearch) {
+                $query->with('customer')
+                    ->where('id', 'LIKE', "%$requestSearch%")
+                    ->orWhere('placed_at', 'LIKE', "%$requestSearch%")
+                    ->orWhereHas('customer', function ($workerQuery) use ($requestSearch) {
+                        $workerQuery->where('name', 'LIKE', "%$requestSearch%");
+                    });
+            })
+            ->where('status', 'shipment')
+            ->where('order_type_id', 1)
+            ->where('user_id', $user_id)
+            ->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+    
+            return $this->customResponse($orders);
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
+        } 
+    }
+
+    public function getShipmentById(Order $order){
+        try{
+            $order = Order::with(['orderItems.product.category', 'customer'])->find($order->id);
+            return $this->customResponse($order, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
         return response()->json($response,$code);
