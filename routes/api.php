@@ -12,6 +12,7 @@ use App\Http\Controllers\Worker\IncomingWorkerController;
 use App\Http\Controllers\Admin\StoredProductsController;
 use App\Http\Controllers\Partner\PStoredProductsController;
 use App\Http\Controllers\SharedController;
+use App\Http\Controllers\Admin\OutgoingAdminController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
@@ -65,6 +66,13 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/', [StoredProductsController::class, "getAll"]);
             Route::get('/{stock}', [StoredProductsController::class, "getById"]);
             Route::get('/search/{requestSearch}', [StoredProductsController::class, "search"]);
+        });
+
+        Route::group(['prefix' => 'outgoing'], function(){
+            Route::get('/placed', [OutgoingAdminController::class, "getAllPlaced"]);
+            Route::get('/placed/search/{requestSearch}', [OutgoingAdminController::class, "placedSearch"]);
+            Route::get('/placed/{order}', [OutgoingAdminController::class, "getPlacedById"]);
+            Route::post('/placed/selectWorker', [OutgoingAdminController::class, "selectWorker"]);
         });
     });
 

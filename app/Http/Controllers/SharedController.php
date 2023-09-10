@@ -143,14 +143,14 @@ class SharedController extends Controller
             $lastShipmentInc = Order::where('worker_id', $user_id)
                 ->where('status', 'shipment')
                 ->where('order_type_id', 1)
-                ->orderBy('placed_at', 'desc') // Specify the column to order by
+                ->orderBy('placed_at', 'desc')
                 ->limit(4)
                 ->get();
 
             $lastShipmentOut = Order::where('worker_id', $user_id)
                 ->where('status', 'shipment')
                 ->where('order_type_id', 2)
-                ->orderBy('placed_at', 'desc') // Specify the column to order by
+                ->orderBy('placed_at', 'desc')
                 ->limit(4)
                 ->get();
 
