@@ -3,16 +3,20 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SharedController;
+
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\WorkerController;
-use App\Http\Controllers\Partner\IncomingController;
 use App\Http\Controllers\Admin\IncomingAdminController;
-use App\Http\Controllers\Worker\IncomingWorkerController;
 use App\Http\Controllers\Admin\StoredProductsController;
-use App\Http\Controllers\Partner\PStoredProductsController;
-use App\Http\Controllers\SharedController;
 use App\Http\Controllers\Admin\OutgoingAdminController;
+
+use App\Http\Controllers\Partner\PStoredProductsController;
+use App\Http\Controllers\Partner\IncomingController;
+
+use App\Http\Controllers\Worker\OutgoingWorkerController;
+use App\Http\Controllers\Worker\IncomingWorkerController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
@@ -96,6 +100,17 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/delivered', [IncomingWorkerController::class, "getAllDelivered"]);
             Route::get('/delivered/search/{requestSearch}', [IncomingWorkerController::class, "deliveredSearch"]);
             Route::get('/delivered/{order}', [IncomingWorkerController::class, "getDeliveredtById"]);
+        });
+
+        Route::group(['prefix' => 'outgoing'], function(){
+            Route::get('/shipment', [OutgoingWorkerController::class, "getAllShipment"]);
+            Route::get('/shipment/search/{requestSearch}', [OutgoingWorkerController::class, "shipmentSearch"]);
+            Route::get('/shipment/{order}', [OutgoingWorkerController::class, "getShipmentById"]);
+            Route::post('/shipment/addToDelivered', [OutgoingWorkerController::class, "addToDelivered"]);
+
+            Route::get('/delivered', [OutgoingWorkerController::class, "getAllDelivered"]);
+            Route::get('/delivered/search/{requestSearch}', [OutgoingWorkerController::class, "deliveredSearch"]);
+            Route::get('/delivered/{order}', [OutgoingWorkerController::class, "getDeliveredtById"]);
         });
     });
 
