@@ -73,6 +73,14 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/placed/search/{requestSearch}', [OutgoingAdminController::class, "placedSearch"]);
             Route::get('/placed/{order}', [OutgoingAdminController::class, "getPlacedById"]);
             Route::post('/placed/selectWorker', [OutgoingAdminController::class, "selectWorker"]);
+
+            Route::get('/shipment', [IncomingAdminController::class, "getAllShipment"]);
+            Route::get('/shipment/search/{requestSearch}', [IncomingAdminController::class, "shipmentSearch"]);
+            Route::get('/shipment/{order}', [IncomingAdminController::class, "getShipmentById"]);
+
+            Route::get('/delivered', [IncomingAdminController::class, "getAllDelivered"]);
+            Route::get('/delivered/search/{requestSearch}', [IncomingAdminController::class, "deliveredSearch"]);
+            Route::get('/delivered/{order}', [IncomingAdminController::class, "getDeliveredtById"]);
         });
     });
 
