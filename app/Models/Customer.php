@@ -11,6 +11,8 @@ class Customer extends Model
 
     protected $guarded = ['id'];
 
+    public $timestamps = false;
+    
     public function orders(){
         return $this->hasMany(Order::class, 'customer_id');
     }

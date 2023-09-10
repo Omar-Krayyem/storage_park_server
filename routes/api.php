@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\OutgoingAdminController;
 
 use App\Http\Controllers\Partner\PStoredProductsController;
 use App\Http\Controllers\Partner\IncomingController;
+use App\Http\Controllers\Partner\OutgoingController;
 
 use App\Http\Controllers\Worker\OutgoingWorkerController;
 use App\Http\Controllers\Worker\IncomingWorkerController;
@@ -25,6 +26,7 @@ Route::post("/register", [AuthController::class, "register"]);
 Route::group(["middleware" => "auth:api"], function(){
     Route::group(["middleware" => "auth.admin", "prefix" => "admin"], function(){
         Route::get('dashboard', [SharedController::class, "getAdminStat"]);
+        Route::post("/profile", [SharedController::class, "updateProfile"]);
 
         Route::group(['prefix' => 'request'], function(){
             Route::get('/', [RequestController::class, "getAllRequest"]);
@@ -90,6 +92,7 @@ Route::group(["middleware" => "auth:api"], function(){
 
     Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function(){
         Route::get('dashboard', [SharedController::class, "getWorkerStat"]);
+        Route::post("/profile", [SharedController::class, "updateProfile"]);
 
         Route::group(['prefix' => 'incoming'], function(){
             Route::get('/shipment', [IncomingWorkerController::class, "getAllShipment"]);
@@ -116,6 +119,7 @@ Route::group(["middleware" => "auth:api"], function(){
 
     Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function(){
         Route::get('dashboard', [SharedController::class, "getPartnerStat"]);
+        Route::post("/profile", [SharedController::class, "updateProfile"]);
 
         Route::group(['prefix' => 'incoming'], function(){
             Route::post('placed/create', [IncomingController::class, "createOrder"]);
@@ -138,8 +142,14 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/{stock}', [PStoredProductsController::class, "getById"]);
             Route::get('/search/{requestSearch}', [PStoredProductsController::class, "search"]);
         });
+
+        Route::group(['prefix' => 'outgoing'], function(){
+            Route::post('placed/create', [OutgoingController::class, "createOrder"]);
+            Route::get('/placed', [OutgoingController::class, "getAllPlaced"]);
+            Route::get('/placed/{order}', [OutgoingController::class, "getPlacedById"]);
+            Route::get('/products', [OutgoingController::class, "getStock"]);
+            Route::get('placed/search/{requestSearch}', [OutgoingController::class, "placedSearch"]);
+        });
+
     });
-
-    Route::post("/profile", [SharedController::class, "updateProfile"]);
-
 });
