@@ -91,6 +91,18 @@ class WorkerController extends Controller
     public function updateWorker(Request $request_info)
     {
         try {
+
+            $existingUser = User::where('id', '!=', $request_info->user_id)
+                ->where(function ($query) use ($request_info) {
+                    $query->where('email', $request_info->email)
+                        ->orWhere('company_name', $request_info->company_name);
+                })
+                ->first();
+
+            if ($existingUser) {
+                return $this->customResponse('Email already exists', 'error', 400);
+            }
+
             $user = User::find($request_info->user_id);
             $user->first_name = $request_info->first_name;
             $user->last_name = $request_info->last_name;

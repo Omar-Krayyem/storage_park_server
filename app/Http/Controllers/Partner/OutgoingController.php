@@ -172,6 +172,7 @@ class OutgoingController extends Controller
             ->where('status', 'shipment')
             ->where('order_type_id', 2)
             ->where('user_id', $user_id)
+            ->with('customer')
             ->get();
 
             $orders= $orders->map(function ($order) {
@@ -225,6 +226,7 @@ class OutgoingController extends Controller
             ->where('status', 'delivered')
             ->where('order_type_id', 2)
             ->where('user_id', $user_id)
+            ->with('customer')
             ->get();
 
             $orders= $orders->map(function ($order) {
