@@ -168,6 +168,15 @@ class SharedController extends Controller
         }
     }
 
+    public function getUser(){
+        try{
+            $user = Auth::user();
+            return $this->customResponse($user, 'Success');
+        }catch (Exception $e) {
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
 
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
