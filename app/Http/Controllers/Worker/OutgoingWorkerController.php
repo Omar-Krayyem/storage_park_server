@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Worker;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -38,7 +39,7 @@ class OutgoingWorkerController extends Controller
     public function shipmentSearch($requestSearch) {
         try {
             $worker_id = Auth::user()->id;
-            $orders = Order::with(['user', 'worker'])
+            $orders = Order::with(['user', 'worker', 'customer'])
                 ->where('status', 'shipment')
                 ->where('order_type_id', 2)
                 ->where('worker_id', $worker_id)
@@ -122,9 +123,9 @@ class OutgoingWorkerController extends Controller
     public function deliveredSearch($requestSearch) {
         try {
             $worker_id = Auth::user()->id;
-            $orders = Order::with(['user', 'worker'])
+            $orders = Order::with(['user', 'worker', 'customer'])
                 ->where('status', 'delivered')
-                ->where('order_type_id', 1)
+                ->where('order_type_id', 2)
                 ->where('worker_id', $worker_id)
                 ->where(function ($query) use ($requestSearch) {
                     $query->where('id', 'LIKE', "%$requestSearch%")
