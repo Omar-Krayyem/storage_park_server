@@ -141,6 +141,7 @@ class SharedController extends Controller
                 ->where('status', 'shipment')
                 ->where('order_type_id', 1)
                 ->orderBy('placed_at', 'desc')
+                ->with('user')
                 ->limit(4)
                 ->get();
 
