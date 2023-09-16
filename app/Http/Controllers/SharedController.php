@@ -35,13 +35,9 @@ class SharedController extends Controller
             $user->phone = $validated_data['phone'];
             $user->address = $validated_data['address'];
     
-            if (array_key_exists('password', $validated_data)) {
+            if (array_key_exists('password', $validated_data) && $validated_data['password'] !== null) {
                 $password = Hash::make($validated_data['password']);
                 $user->password = $password;
-            }
-    
-            if (array_key_exists('company_name', $validated_data)) {
-                $user->company_name = $validated_data['company_name'];
             }
     
             $user->save();
