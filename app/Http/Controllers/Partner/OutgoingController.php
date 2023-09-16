@@ -24,7 +24,6 @@ class OutgoingController extends Controller
                 'customerName' => ['required', 'string'],
                 'customerEmail' => ['required', 'string'],
                 'customerPhone' => ['required', 'string'],
-                'customerAddress' => ['required', 'string'],
                 'items' => ['required', 'array'],
             ]);
 
@@ -35,7 +34,6 @@ class OutgoingController extends Controller
                     'name' => $validated_data['customerName'],
                     'email' => $validated_data['customerEmail'],
                     'phone' => $validated_data['customerPhone'],
-                    'address' => $validated_data['customerAddress'],
                 ]);
             }
     
@@ -107,7 +105,7 @@ class OutgoingController extends Controller
     public function getStock(){
         try{
             $user_id = Auth::user()->id;
-            $stocks = Stock::with('product.category')->where('user_id', $user_id)->get();            
+            $stocks = Stock::with('product.category')->where('user_id', $user_id)->whereNot('quantity', 0)->get();            
 
             return $this->customResponse($stocks, 'success', 200);
         }catch(Exception $e){
