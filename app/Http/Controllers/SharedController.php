@@ -22,7 +22,6 @@ class SharedController extends Controller
                 'last_name' => ['required', 'string'],
                 'phone' => ['required', 'string'],
                 'email' => ['required', 'string'],
-                'password' => ['string', 'min:6', 'nullable'],
                 'address' => ['required', 'string'],
                 'company_name' => ['string', 'nullable'],
             ]);
@@ -41,6 +40,24 @@ class SharedController extends Controller
 
             $user->save();
     
+            return $this->customResponse($user, 'Updated Successfully');
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
+    public function updatePassword(Request $request_info){
+        try{
+            $user_id = Auth::user()->id;
+            $validated_data = $this->validate($request_info, [
+                'password' => ['required', 'string', 'min:6', 'nullable'],
+            ]);
+
+            $user = User::find($user_id);
+            $password = Hash::make($validated_data['password']);
+            $user->password = $password;
+            $user->save();
+
             return $this->customResponse($user, 'Updated Successfully');
         } catch (Exception $e) {
             return self::customResponse($e->getMessage(),'error',500);
