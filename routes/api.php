@@ -24,10 +24,11 @@ Route::post("/register", [AuthController::class, "register"]);
 
 
 Route::group(["middleware" => "auth:api"], function(){
+    Route::post("/password", [SharedController::class, "updatePassword"]);
+
     Route::group(["middleware" => "auth.admin", "prefix" => "admin"], function(){
         Route::get('dashboard', [SharedController::class, "getAdminStat"]);
         Route::post("/profile", [SharedController::class, "updateProfile"]);
-        Route::post("/password", [SharedController::class, "updatePassword"]);
         Route::get('/profile/get', [SharedController::class, "getUser"]);
         
         Route::group(['prefix' => 'request'], function(){
@@ -95,7 +96,6 @@ Route::group(["middleware" => "auth:api"], function(){
     Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function(){
         Route::get('dashboard', [SharedController::class, "getWorkerStat"]);
         Route::post("/profile", [SharedController::class, "updateProfile"]);
-        Route::post("/password", [SharedController::class, "updatePassword"]);
         Route::get('/profile/get', [SharedController::class, "getUser"]);
         
         Route::group(['prefix' => 'incoming'], function(){
@@ -124,7 +124,6 @@ Route::group(["middleware" => "auth:api"], function(){
     Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function(){
         Route::get('dashboard', [SharedController::class, "getPartnerStat"]);
         Route::post("/profile", [SharedController::class, "updateProfile"]);
-        Route::post("/password", [SharedController::class, "updatePassword"]);
         Route::get('/profile/get', [SharedController::class, "getUser"]);
 
         Route::group(['prefix' => 'incoming'], function(){
