@@ -153,6 +153,27 @@ class SharedController extends Controller
             $shipmentInc = Order::where('worker_id', $user_id)->where('status', 'shipment')->where('order_type_id', 1)->count();
             $shipmentOut = Order::where('worker_id', $user_id)->where('status', 'shipment')->where('order_type_id', 2)->count();
 
+            $currentYear = now()->year;
+            $currentMonth = now()->month;
+            $dailyOrderCounts = [];
+
+            for ($day = 1; $day <= now()->daysInMonth; $day++) {
+                $startDate = "$currentYear-$currentMonth-$day 00:00:00";
+                $endDate = "$currentYear-$currentMonth-$day 23:59:59";
+            
+                $dailyOrderCount = Order::where('worker_id', $user_id)
+                    ->where('status', 'delivered')
+                    ->whereBetween('placed_at', [$startDate, $endDate])
+                    ->count();
+            
+                $dailyOrderCounts[] = [
+                    // 'name' => "$currentYear-$currentMonth-$day",
+                    'name' => "$day",
+                    'uv' => $dailyOrderCount,
+                ];
+            }
+            
+
             $lastShipmentInc = Order::where('worker_id', $user_id)
                 ->where('status', 'shipment')
                 ->where('order_type_id', 1)
@@ -174,6 +195,7 @@ class SharedController extends Controller
                 'shipmentOut' => $shipmentOut,
                 'lastShipmentInc' => $lastShipmentInc,
                 'lastShipmentOut' => $lastShipmentOut,
+                'dailyOrderCounts' => $dailyOrderCounts,
             ];
 
             return $this->customResponse($result, 'Success');
