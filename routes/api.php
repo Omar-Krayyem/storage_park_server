@@ -21,7 +21,7 @@ use App\Http\Controllers\Worker\IncomingWorkerController;
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
-
+Route::get('/location/{order}', [SharedController::class, "getLocation"]);
 
 Route::group(["middleware" => "auth:api"], function(){
     Route::post("/password", [SharedController::class, "updatePassword"]);

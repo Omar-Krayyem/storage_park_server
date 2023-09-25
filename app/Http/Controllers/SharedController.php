@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CurrentLocation;
 use Illuminate\Http\Request;
 use Exception;
 use App\Models\User;
@@ -213,6 +214,15 @@ class SharedController extends Controller
         }
     }
 
+    public function getLocation(Order $order){
+        try{
+            $Location = CurrentLocation::where('worker_id', $order->worker_id)->get();
+            
+            return $this->customResponse($Location, 'Success');
+        }catch (Exception $e) {
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
 
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
