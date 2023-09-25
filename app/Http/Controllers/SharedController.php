@@ -217,6 +217,26 @@ class SharedController extends Controller
     public function getLocation(Order $order){
         try{
             $Location = CurrentLocation::where('worker_id', $order->worker_id)->get();
+
+            return $this->customResponse($Location, 'Success');
+        }catch (Exception $e) {
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
+    public function addLocation(Request $request_info){
+        try{
+            $validated_data = $this->validate($request_info, [
+                'longitude' => ['required'],
+                'latitude' => ['required'],
+                'worker_id' => ['required', 'numeric']
+            ]);
+
+            $Location = CurrentLocation::where('worker_id', $validated_data['worker_id'])->first(); 
+            $Location->longitude = $validated_data['longitude'];
+            $Location->latitude = $validated_data['latitude'];
+
+            $Location->save();
             
             return $this->customResponse($Location, 'Success');
         }catch (Exception $e) {
