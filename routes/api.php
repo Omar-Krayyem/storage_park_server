@@ -23,6 +23,7 @@ Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
 Route::get('/location/{order}', [SharedController::class, "getLocation"]);
 Route::post('/location', [SharedController::class, "addLocation"]);
+Route::get('/checkOrder/{order}', [SharedController::class, "checkOrder"]);
 
 Route::group(["middleware" => "auth:api"], function(){
     Route::post("/password", [SharedController::class, "updatePassword"]);

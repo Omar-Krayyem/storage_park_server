@@ -244,6 +244,20 @@ class SharedController extends Controller
         }
     }
 
+    public function checkOrder(Order $order){
+        try{
+            $Location = Order::where('id', $order->id)->where('status', 'shipment')->first();
+
+            if (!$Location) {
+                return $this->customResponse($order, 'error');
+            }
+
+            return $this->customResponse($Location, 'Success');
+        }catch (Exception $e) {
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }   
+
     function customResponse($data, $status = 'success', $code = 200){
         $response = ['status' => $status,'data' => $data];
         return response()->json($response,$code);
