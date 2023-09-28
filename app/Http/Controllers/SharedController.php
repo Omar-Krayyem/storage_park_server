@@ -224,23 +224,38 @@ class SharedController extends Controller
         }
     }
 
-    public function addLocation(Request $request_info){
-        try{
+    public function addLocation(Request $request_info)
+    {
+        try {
             $validated_data = $this->validate($request_info, [
                 'longitude' => ['required'],
                 'latitude' => ['required'],
-                'worker_id' => ['required', 'numeric']
+                'worker_id' => ['required']
             ]);
 
-            $Location = CurrentLocation::where('worker_id', $validated_data['worker_id'])->first(); 
-            $Location->longitude = $validated_data['longitude'];
-            $Location->latitude = $validated_data['latitude'];
+            $location = CurrentLocation::where('worker_id', $validated_data['worker_id'])->first();
 
-            $Location->save();
+            if(!$location){
+                $newLocation = CurrentLocation::create([
+                    'worker_id' => $validated_data['worker_id'],
+                    'longitude' => $validated_data['longitude'],
+                    'latitude' => $validated_data['latitude'],
+                ]);
+
+                return $this->customResponse($newLocation, 'Success');
+            }   
+            else{
+                $location->longitude = (float) $validated_data['longitude'];
+                $location->latitude = (float) $validated_data['latitude'];
+
+                $location->save();
+
+                return $this->customResponse($location, 'Success');
+            }
+
             
-            return $this->customResponse($Location, 'Success');
-        }catch (Exception $e) {
-            return self::customResponse($e->getMessage(),'error',500);
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
         }
     }
 

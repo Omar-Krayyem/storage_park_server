@@ -23,17 +23,18 @@ Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
 Route::get('/location/{order}', [SharedController::class, "getLocation"]);
 Route::post('/location', [SharedController::class, "addLocation"]);
+Route::post('/new_location', [SharedController::class, "newLocation"]);
 Route::get('/checkOrder/{order}', [SharedController::class, "checkOrder"]);
 
-Route::group(["middleware" => "auth:api"], function(){
+Route::group(["middleware" => "auth:api"], function () {
     Route::post("/password", [SharedController::class, "updatePassword"]);
 
-    Route::group(["middleware" => "auth.admin", "prefix" => "admin"], function(){
+    Route::group(["middleware" => "auth.admin", "prefix" => "admin"], function () {
         Route::get('dashboard', [SharedController::class, "getAdminStat"]);
         Route::post("/profile", [SharedController::class, "updateProfile"]);
         Route::get('/profile/get', [SharedController::class, "getUser"]);
-        
-        Route::group(['prefix' => 'request'], function(){
+
+        Route::group(['prefix' => 'request'], function () {
             Route::get('/', [RequestController::class, "getAllRequest"]);
             Route::get('/{user}', [RequestController::class, "getById"]);
             Route::get('/search/{requestSearch}', [RequestController::class, "requestSearch"]);
@@ -41,7 +42,7 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::delete('/{user}', [RequestController::class, "rejectedRequest"]);
         });
 
-        Route::group(['prefix' => 'partner'], function(){
+        Route::group(['prefix' => 'partner'], function () {
             Route::get('/', [PartnerController::class, "getAllPartner"]);
             Route::get('/{user}', [PartnerController::class, "getById"]);
             Route::get('/search/{requestSearch}', [PartnerController::class, "partnerSearch"]);
@@ -49,7 +50,7 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::post('/', [PartnerController::class, "updatePartner"]);
         });
 
-        Route::group(['prefix' => 'worker'], function(){
+        Route::group(['prefix' => 'worker'], function () {
             Route::post('/store', [WorkerController::class, "createWorker"]);
             Route::post('/update', [WorkerController::class, "updateWorker"]);
             Route::get('/', [WorkerController::class, "getAllWorker"]);
@@ -58,7 +59,7 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::delete('/{user}', [WorkerController::class, "deleteWorker"]);
         });
 
-        Route::group(['prefix' => 'incoming'], function(){
+        Route::group(['prefix' => 'incoming'], function () {
             Route::get('/placed', [IncomingAdminController::class, "getAllPlaced"]);
             Route::get('/placed/search/{requestSearch}', [IncomingAdminController::class, "placedSearch"]);
             Route::get('/placed/{order}', [IncomingAdminController::class, "getPlacedById"]);
@@ -73,13 +74,13 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/delivered/{order}', [IncomingAdminController::class, "getDeliveredtById"]);
         });
 
-        Route::group(['prefix' => 'stock'], function(){
+        Route::group(['prefix' => 'stock'], function () {
             Route::get('/', [StoredProductsController::class, "getAll"]);
             Route::get('/{stock}', [StoredProductsController::class, "getById"]);
             Route::get('/search/{requestSearch}', [StoredProductsController::class, "search"]);
         });
 
-        Route::group(['prefix' => 'outgoing'], function(){
+        Route::group(['prefix' => 'outgoing'], function () {
             Route::get('/placed', [OutgoingAdminController::class, "getAllPlaced"]);
             Route::get('/placed/search/{requestSearch}', [OutgoingAdminController::class, "placedSearch"]);
             Route::get('/placed/{order}', [OutgoingAdminController::class, "getPlacedById"]);
@@ -95,12 +96,12 @@ Route::group(["middleware" => "auth:api"], function(){
         });
     });
 
-    Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function(){
+    Route::group(["middleware" => "auth.worker", "prefix" => "worker"], function () {
         Route::get('dashboard', [SharedController::class, "getWorkerStat"]);
         Route::post("/profile", [SharedController::class, "updateProfile"]);
         Route::get('/profile/get', [SharedController::class, "getUser"]);
-        
-        Route::group(['prefix' => 'incoming'], function(){
+
+        Route::group(['prefix' => 'incoming'], function () {
             Route::get('/shipment', [IncomingWorkerController::class, "getAllShipment"]);
             Route::get('/shipment/search/{requestSearch}', [IncomingWorkerController::class, "shipmentSearch"]);
             Route::get('/shipment/{order}', [IncomingWorkerController::class, "getShipmentById"]);
@@ -111,7 +112,7 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/delivered/{order}', [IncomingWorkerController::class, "getDeliveredtById"]);
         });
 
-        Route::group(['prefix' => 'outgoing'], function(){
+        Route::group(['prefix' => 'outgoing'], function () {
             Route::get('/shipment', [OutgoingWorkerController::class, "getAllShipment"]);
             Route::get('/shipment/search/{requestSearch}', [OutgoingWorkerController::class, "shipmentSearch"]);
             Route::get('/shipment/{order}', [OutgoingWorkerController::class, "getShipmentById"]);
@@ -123,12 +124,12 @@ Route::group(["middleware" => "auth:api"], function(){
         });
     });
 
-    Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function(){
+    Route::group(["middleware" => "auth.partner", "prefix" => "partner"], function () {
         Route::get('dashboard', [SharedController::class, "getPartnerStat"]);
         Route::post("/profile", [SharedController::class, "updateProfile"]);
         Route::get('/profile/get', [SharedController::class, "getUser"]);
 
-        Route::group(['prefix' => 'incoming'], function(){
+        Route::group(['prefix' => 'incoming'], function () {
             Route::post('placed/create', [IncomingController::class, "createOrder"]);
             Route::get('/placed', [IncomingController::class, "getAllPlaced"]);
             Route::get('/placed/{order}', [IncomingController::class, "getPlacedById"]);
@@ -144,13 +145,13 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/delivered/{order}', [IncomingController::class, "getDeliveredtById"]);
         });
 
-        Route::group(['prefix' => 'stock'], function(){
+        Route::group(['prefix' => 'stock'], function () {
             Route::get('/', [PStoredProductsController::class, "getAll"]);
             Route::get('/{stock}', [PStoredProductsController::class, "getById"]);
             Route::get('/search/{requestSearch}', [PStoredProductsController::class, "search"]);
         });
 
-        Route::group(['prefix' => 'outgoing'], function(){
+        Route::group(['prefix' => 'outgoing'], function () {
             Route::post('placed/create', [OutgoingController::class, "createOrder"]);
             Route::get('/placed', [OutgoingController::class, "getAllPlaced"]);
             Route::get('/placed/{order}', [OutgoingController::class, "getPlacedById"]);
@@ -165,6 +166,5 @@ Route::group(["middleware" => "auth:api"], function(){
             Route::get('/delivered/search/{requestSearch}', [OutgoingController::class, "deliveredSearch"]);
             Route::get('/delivered/{order}', [OutgoingController::class, "getDeliveredtById"]);
         });
-
     });
 });
