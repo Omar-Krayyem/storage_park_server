@@ -76,7 +76,7 @@ class IncomingController extends Controller
         try{
             $user_id = Auth::user()->id;
 
-            $orders = Order::where('user_id', $user_id)->where('order_type_id', 1)->where('status', 'placed')->get();
+            $orders = Order::where('user_id', $user_id)->where('order_type_id', 1)->get();
 
             $orders= $orders->map(function ($order) {
                 $order->item_count = $order->orderItems->count();
