@@ -10,6 +10,20 @@ use App\Models\User;
 
 class IncomingAdminController extends Controller
 {
+    public function getAllIncoming(){
+        try{
+            $orders = Order::where('order_type_id', 1)->with('user')->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+
+            return $this->customResponse($orders, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
 
     public function getAllPlaced(){
         try{

@@ -60,6 +60,7 @@ Route::group(["middleware" => "auth:api"], function () {
         });
 
         Route::group(['prefix' => 'incoming'], function () {
+            Route::get('/', [IncomingAdminController::class, "getAllIncoming"]);
             Route::get('/placed', [IncomingAdminController::class, "getAllPlaced"]);
             Route::get('/placed/search/{requestSearch}', [IncomingAdminController::class, "placedSearch"]);
             Route::get('/placed/{order}', [IncomingAdminController::class, "getPlacedById"]);
