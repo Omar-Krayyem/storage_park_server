@@ -50,6 +50,22 @@ class IncomingAdminController extends Controller
         } 
     }
 
+    public function getIncomingById(Order $order){
+        try{
+            $order = Order::with(['orderItems.product.category' , 'user', 'worker'])->find($order->id);
+            $workers = User::where('user_type_id' , 2)->get();
+
+            $result = [
+                'order' => $order,
+                'workers' => $workers,
+            ];
+
+            return $this->customResponse($result, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
     public function getAllPlaced(){
         try{
             $orders = Order::where('order_type_id', 1)->where('status', 'placed')->with('user')->get();
