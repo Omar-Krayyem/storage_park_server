@@ -121,9 +121,9 @@ class IncomingController extends Controller
             $user_id = Auth::user()->id;
             $orders = Order::where(function ($query) use ($requestSearch) {
                 $query->where('id', 'LIKE', "%$requestSearch%")
-                     ->orWhere('placed_at', 'LIKE', "%$requestSearch%");
+                     ->orWhere('placed_at', 'LIKE', "%$requestSearch%")
+                     ->orwhere('status', 'LIKE', "%$requestSearch%");
             })
-            ->where('status', 'placed')
             ->where('order_type_id', 1)
             ->where('user_id', $user_id)
             ->get();
