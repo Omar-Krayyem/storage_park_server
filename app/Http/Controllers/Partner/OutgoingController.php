@@ -80,7 +80,7 @@ class OutgoingController extends Controller
         try{
             $user_id = Auth::user()->id;
 
-            $orders = Order::where('user_id', $user_id)->where('order_type_id', 2)->where('status', 'placed')->with('customer')->get();
+            $orders = Order::where('user_id', $user_id)->where('order_type_id', 2)->with('customer')->get();
 
             $orders= $orders->map(function ($order) {
                 $order->item_count = $order->orderItems->count();
@@ -119,11 +119,11 @@ class OutgoingController extends Controller
             $orders = Order::with(['orderItems.product.category', 'customer'])->where(function ($query) use ($requestSearch) {
                 $query->where('id', 'LIKE', "%$requestSearch%")
                      ->orWhere('placed_at', 'LIKE', "%$requestSearch%")
+                     ->orwhere('status', 'LIKE', "%$requestSearch%")
                      ->orWhereHas('customer', function ($workerQuery) use ($requestSearch) {
                         $workerQuery->where('name', 'LIKE', "%$requestSearch%");
                     });
             })
-            ->where('status', 'placed')
             ->where('order_type_id', 2)
             ->where('user_id', $user_id)
             ->get();
