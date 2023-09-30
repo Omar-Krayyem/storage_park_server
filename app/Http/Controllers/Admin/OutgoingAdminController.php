@@ -52,6 +52,22 @@ class OutgoingAdminController extends Controller
         } 
     }
 
+    public function getOutgoingById(Order $order){
+        try{
+            $order = Order::with(['orderItems.product.category' , 'user', 'worker', 'customer'])->find($order->id);
+            $workers = User::where('user_type_id' , 2)->get();
+
+            $result = [
+                'order' => $order,
+                'workers' => $workers,
+            ];
+
+            return $this->customResponse($result, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
     public function getAllPlaced(){
         try{
             $orders = Order::where('order_type_id', 2)->where('status', 'placed')->with(['user', 'customer'])->get();
