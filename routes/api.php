@@ -85,6 +85,7 @@ Route::group(["middleware" => "auth:api"], function () {
 
         Route::group(['prefix' => 'outgoing'], function () {
             Route::get('/', [OutgoingAdminController::class, "getAllOutgoing"]);
+            Route::get('/search/{requestSearch}', [OutgoingAdminController::class, "outgoingSearch"]);
             Route::get('/placed', [OutgoingAdminController::class, "getAllPlaced"]);
             Route::get('/placed/search/{requestSearch}', [OutgoingAdminController::class, "placedSearch"]);
             Route::get('/placed/{order}', [OutgoingAdminController::class, "getPlacedById"]);

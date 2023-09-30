@@ -25,6 +25,33 @@ class OutgoingAdminController extends Controller
         }
     }
 
+    public function outgoingSearch($requestSearch) {
+        try {
+            $orders = Order::with(['user', 'customer'])
+            ->where('order_type_id', 2)
+            ->where(function ($query) use ($requestSearch) {
+                $query->where('id', 'LIKE', "%$requestSearch%")
+                    ->orwhere('status', 'LIKE', "%$requestSearch%")
+                    ->orWhereHas('user', function ($userQuery) use ($requestSearch) {
+                         $userQuery->where('company_name', 'LIKE', "%$requestSearch%");
+                     })
+                     ->orWhereHas('customer', function ($userQuery) use ($requestSearch) {
+                        $userQuery->where('name', 'LIKE', "%$requestSearch%");
+                    });
+            })
+            ->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+    
+            return $this->customResponse($orders);
+        } catch (Exception $e) {
+            return self::customResponse($e->getMessage(), 'error', 500);
+        } 
+    }
+
     public function getAllPlaced(){
         try{
             $orders = Order::where('order_type_id', 2)->where('status', 'placed')->with(['user', 'customer'])->get();

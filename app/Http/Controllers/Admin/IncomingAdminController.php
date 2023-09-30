@@ -32,7 +32,6 @@ class IncomingAdminController extends Controller
             ->where(function ($query) use ($requestSearch) {
                 $query->where('id', 'LIKE', "%$requestSearch%")
                     ->orwhere('status', 'LIKE', "%$requestSearch%")
-                    ->orWhere('placed_at', 'LIKE', "%$requestSearch%")
                     ->orWhereHas('user', function ($userQuery) use ($requestSearch) {
                          $userQuery->where('company_name', 'LIKE', "%$requestSearch%");
                      });
