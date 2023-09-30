@@ -10,6 +10,21 @@ use Exception;
 
 class OutgoingAdminController extends Controller
 {
+    public function getAllOutgoing(){
+        try{
+            $orders = Order::where('order_type_id', 2)->with(['user', 'customer'])->get();
+
+            $orders= $orders->map(function ($order) {
+                $order->item_count = $order->orderItems->count();
+                return $order;
+            });
+
+            return $this->customResponse($orders, 'success', 200);
+        }catch(Exception $e){
+            return self::customResponse($e->getMessage(),'error',500);
+        }
+    }
+
     public function getAllPlaced(){
         try{
             $orders = Order::where('order_type_id', 2)->where('status', 'placed')->with(['user', 'customer'])->get();
